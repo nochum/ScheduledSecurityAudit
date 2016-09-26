@@ -1,0 +1,6 @@
+public class ConfigChange {
+    public String section { get; set;}
+    public String action { get; set;}
+    public String display { get; set;}
+    public DateTime changeTime { get; set;}
+}

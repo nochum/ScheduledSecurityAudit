@@ -46,7 +46,10 @@ The code in this project should provide notifications in the event of any of the
 To schedule this code to run on 15-minute intervals, simply add the Apex class to your org and then run the following in an "Execute Anonymous" window in the Developer Console:
 
 `System.schedule('AuditSecurity-Job1', '0 0 * * * ?', new ScheduledAuditSecurity());`
+
 `System.schedule('AuditSecurity-Job2', '0 15 * * * ?', new ScheduledAuditSecurity());`
+
 `System.schedule('AuditSecurity-Job3', '0 30 * * * ?', new ScheduledAuditSecurity());`
+
 `System.schedule('AuditSecurity-Job4', '0 45 * * * ?', new ScheduledAuditSecurity());`
 

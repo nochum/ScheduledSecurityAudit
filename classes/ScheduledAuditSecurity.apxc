@@ -9,7 +9,7 @@ global class ScheduledAuditSecurity implements Schedulable {
         update ssas;
 
         // Retrieve all configuration changes since last run
-        List<SetupAuditTrail> sat = [SELECT Id, Section, Action, Display, CreatedDate FROM SetupAuditTrail
+        List<SetupAuditTrail> sat = [SELECT Id, CreatedBy.Name, Section, Action, Display, CreatedDate FROM SetupAuditTrail
                                WHERE CreatedDate >= :lastRun
                                ORDER BY CreatedDate];
         
@@ -20,6 +20,7 @@ global class ScheduledAuditSecurity implements Schedulable {
                auditLogRec.Section == 'Password Policies' ||
                auditLogRec.Section == 'Session Settings') {
                    ConfigChange chg = new ConfigChange();
+                   chg.createdByName = auditLogRec.CreatedBy.Name;
                    chg.section = auditLogRec.Section;
                    chg.action = auditLogRec.Action;
                    chg.display = auditLogRec.Display;
@@ -36,7 +37,8 @@ global class ScheduledAuditSecurity implements Schedulable {
             message.plainTextBody = 
                 'The following changes have been made to the org security setttings:\n';
             for (ConfigChange chg : chgList) {
-                message.plainTextBody += chg.changeTime + '\t' + chg.action + '\t' + chg.display + '\n';
+                message.plainTextBody += chg.changeTime + '\t' + chg.createdByName + '\t' +
+                    chg.action + '\t' + chg.display + '\n';
             }
             message.setToAddresses(new String[] {'nklein@salesforce.com'});
             messages.add(message);

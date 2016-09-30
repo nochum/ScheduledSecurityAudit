@@ -31,6 +31,12 @@ global class ScheduledAuditSecurity implements Schedulable {
         
         // Send an email if security settings were changed
         if (chgList.size() > 0) {
+            List<String> emailRecipients = new List<String>();
+            for (NotificationEmails__c ne : [SELECT RecipientEmail__c 
+                                             FROM NotificationEmails__c 
+                                             WHERE NotificationType__c = 'SecurityAudit']) {
+                emailRecipients.add(ne.RecipientEmail__c);
+            }
             Messaging.Email[] messages = new List<Messaging.Email>();
             Messaging.SingleEmailMessage message = new Messaging.SingleEmailMessage();
             message.subject = 'Changes have been made to org security settings';
@@ -40,10 +46,9 @@ global class ScheduledAuditSecurity implements Schedulable {
                 message.plainTextBody += chg.changeTime + '\t' + chg.createdByName + '\t' +
                     chg.action + '\t' + chg.display + '\n';
             }
-            message.setToAddresses(new String[] {'nklein@salesforce.com'});
+            message.setToAddresses(emailRecipients);
             messages.add(message);
 			Messaging.sendEmail(messages);
-
         }
     }
 }
